@@ -120,6 +120,7 @@ export default function PacketList({ mode, onOpenPacket, onChangeContentMode }) 
           Change content mode
         </button>
       )}
+      <p className="sync-hint">Progress is saved on your device. Sync when you have connection to send it to your school.</p>
       <div className="sync-row">
         <button
           type="button"

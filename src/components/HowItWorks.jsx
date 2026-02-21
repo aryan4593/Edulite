@@ -20,24 +20,27 @@ export default function HowItWorks({ onClose }) {
         </div>
         <div className="how-it-works-body">
           <p className="how-it-works-tagline">
-            We built learning for places where the internet doesn’t.
+            EduLite is not just offline-first. It is literacy-first, language-first, and bandwidth-first.
           </p>
           <ul className="how-it-works-list">
             <li>
-              <strong>Offline-first</strong> — Download packets and learn with no connection. Everything you need is on your device.
+              <strong>You open the app</strong> — It works as a PWA and offline. No install required; add to home screen for the best experience.
             </li>
             <li>
-              <strong>Content tiers</strong> — Pick text-only, text + images, or full (audio/video) so it works on slow or limited networks.
+              <strong>We check your connection</strong> — You see only content modes that work for your network (2G / 3G / 4G). Adaptive content keeps learning possible on slow links.
             </li>
             <li>
-              <strong>Sync when you can</strong> — Progress is saved locally. Use “Sync now” when you have any network to upload results.
+              <strong>You learn</strong> — Content (text, images, audio, video by tier) plus quizzes: practice questions, then assessment. Progress is saved on your device.
             </li>
             <li>
-              <strong>Sync-by, not submit-by</strong> — In School mode, assignments have a “sync by” date. You can work offline for days and sync before the date.
+              <strong>Progress stays on your device</strong> — Stored offline. Nothing is lost if you disconnect.
+            </li>
+            <li>
+              <strong>When you have connection</strong> — Use “Sync now” to send progress to the server. In School mode, sync by the deadline; you can work offline for days and sync before the date.
             </li>
           </ul>
           <p className="how-it-works-footer">
-            Study mode = learn at your pace. School mode = same experience, with assignments and deadlines.
+            Study mode = learn at your pace. School mode = assigned courses, sync-by dates, and tier limits.
           </p>
         </div>
       </div>

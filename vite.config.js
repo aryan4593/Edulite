@@ -12,9 +12,9 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
       },
       manifest: {
-        name: 'Learning Packets',
-        short_name: 'Packets',
-        description: 'Offline-first learning packets',
+        name: 'EduLite',
+        short_name: 'EduLite',
+        description: 'EduLite is not just offline-first. It is literacy-first, language-first, and bandwidth-first.',
         theme_color: '#1a1a2e',
         background_color: '#16213e',
       },

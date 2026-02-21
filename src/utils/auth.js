@@ -1,6 +1,6 @@
 import { log } from './debug'
 
-const STORAGE_KEY = 'learningPackets_user'
+const STORAGE_KEY = 'edulite_user'
 
 /**
  * Get stored user from localStorage. Returns null if not set or invalid.

@@ -1,6 +1,6 @@
 import Dexie from 'dexie'
 
-export const db = new Dexie('LearningPacketsDB')
+export const db = new Dexie('EduLiteDB')
 
 db.version(1).stores({
   packets: 'id, version, difficulty, estimatedMinutes',

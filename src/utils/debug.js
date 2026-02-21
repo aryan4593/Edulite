@@ -7,15 +7,15 @@ const DEBUG =
   (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1')
 
 if (DEBUG && typeof console !== 'undefined') {
-  console.log('[LP] Debug logging enabled (dev or ?debug=1). Open DevTools → Console to see flow.')
+  console.log('[EduLite] Debug logging enabled (dev or ?debug=1). Open DevTools → Console to see flow.')
 }
 
 export function log(...args) {
-  if (DEBUG) console.log('[LP]', ...args)
+  if (DEBUG) console.log('[EduLite]', ...args)
 }
 
 export function logError(...args) {
-  console.error('[LP]', ...args)
+  console.error('[EduLite]', ...args)
 }
 
 export { DEBUG }

@@ -19,8 +19,9 @@ export default function Login({ onLogin }) {
     <div className="login-screen">
       <div className="login-card">
         <img src="/graduation-cap-icon.svg" alt="" className="login-logo" aria-hidden />
-        <h1>Learning Packets</h1>
-        <p className="login-subtitle">Learn offline. Sync when you can.</p>
+        <h1>EduLite</h1>
+        <p className="login-subtitle">EduLite is not just offline-first. It is literacy-first, language-first, and bandwidth-first.</p>
+        <p className="login-tagline">Learn offline. Sync when you can. We adapt content to your connection (2G / 3G / 4G).</p>
         <form onSubmit={handleSubmit} className="login-form">
           <label htmlFor="login-name">Your name</label>
           <input

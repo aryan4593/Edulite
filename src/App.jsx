@@ -108,20 +108,26 @@ export default function App() {
             <>
               <div className="app-header">
                 <div className="mode-toggle">
-                  <button
-                    type="button"
-                    className={mode === 'study' ? 'active' : ''}
-                    onClick={setModeStudy}
-                  >
-                    Study
-                  </button>
-                  <button
-                    type="button"
-                    className={mode === 'school' ? 'active' : ''}
-                    onClick={setModeSchool}
-                  >
-                    School
-                  </button>
+                  <div className="mode-toggle-option">
+                    <button
+                      type="button"
+                      className={mode === 'study' ? 'active' : ''}
+                      onClick={setModeStudy}
+                    >
+                      Study
+                    </button>
+                    <span className="mode-toggle-sub">Learn at your pace • All packets</span>
+                  </div>
+                  <div className="mode-toggle-option">
+                    <button
+                      type="button"
+                      className={mode === 'school' ? 'active' : ''}
+                      onClick={setModeSchool}
+                    >
+                      School
+                    </button>
+                    <span className="mode-toggle-sub">Assigned courses • Sync-by dates • Tier limits</span>
+                  </div>
                 </div>
               </div>
               <ContentModeScreen onSelect={handleContentModeSelect} />
@@ -130,20 +136,26 @@ export default function App() {
             <>
               <div className="app-header">
                 <div className="mode-toggle">
-                  <button
-                    type="button"
-                    className={mode === 'study' ? 'active' : ''}
-                    onClick={setModeStudy}
-                  >
-                    Study
-                  </button>
-                  <button
-                    type="button"
-                    className={mode === 'school' ? 'active' : ''}
-                    onClick={setModeSchool}
-                  >
-                    School
-                  </button>
+                  <div className="mode-toggle-option">
+                    <button
+                      type="button"
+                      className={mode === 'study' ? 'active' : ''}
+                      onClick={setModeStudy}
+                    >
+                      Study
+                    </button>
+                    <span className="mode-toggle-sub">Learn at your pace • All packets</span>
+                  </div>
+                  <div className="mode-toggle-option">
+                    <button
+                      type="button"
+                      className={mode === 'school' ? 'active' : ''}
+                      onClick={setModeSchool}
+                    >
+                      School
+                    </button>
+                    <span className="mode-toggle-sub">Assigned courses • Sync-by dates • Tier limits</span>
+                  </div>
                 </div>
               </div>
               <PacketList

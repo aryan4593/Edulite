@@ -151,6 +151,8 @@ export default function PacketView({ packetId, assignment, defaultTier, onBack }
 
   const contentText = packet.content?.text || 'No content.'
 
+  const stepIndicatorCurrent = step === 'tier' || step === 'content' ? 'content' : step === 'practice' ? 'practice' : 'assessment'
+
   return (
     <div className="packet-view">
       <header>
@@ -160,9 +162,18 @@ export default function PacketView({ packetId, assignment, defaultTier, onBack }
         <h1>{packet.title}</h1>
       </header>
 
+      <nav className="packet-step-indicator" aria-label="Learning steps">
+        <span className={stepIndicatorCurrent === 'content' ? 'current' : ''}>1. Content</span>
+        <span className="step-sep" aria-hidden>→</span>
+        <span className={stepIndicatorCurrent === 'practice' ? 'current' : ''}>2. Practice</span>
+        <span className="step-sep" aria-hidden>→</span>
+        <span className={stepIndicatorCurrent === 'assessment' ? 'current' : ''}>3. Assessment</span>
+      </nav>
+
       {step === 'tier' && (() => {
         const allowedTierIds = getAllowedTierIdsWithMax(assignment?.maxTier ?? null)
         const { reason } = getStrictCapability()
+        const tierBadge = { textOnly: '2G-friendly', textAndImages: '3G-friendly', full: '4G / Wi‑Fi' }
         return (
           <section className="tier-select">
             <h2>Content mode</h2>
@@ -176,6 +187,7 @@ export default function PacketView({ packetId, assignment, defaultTier, onBack }
             <div className="tier-options">
               {allowedTierIds.map((tierId) => {
                 const t = CONTENT_TIERS[tierId]
+                const badge = tierBadge[tierId]
                 return (
                   <button
                     key={tierId}
@@ -183,6 +195,7 @@ export default function PacketView({ packetId, assignment, defaultTier, onBack }
                     className="tier-card"
                     onClick={() => handleTierSelect(tierId)}
                   >
+                    {badge && <span className="tier-badge">{badge}</span>}
                     <span className="tier-label">{t.label}</span>
                     <span className="tier-desc">{t.description}</span>
                   </button>

@@ -1,4 +1,4 @@
-const DEFAULT_TIER_KEY = 'learningPackets_defaultTier'
+const DEFAULT_TIER_KEY = 'edulite_defaultTier'
 
 export function getDefaultTier() {
   try {
