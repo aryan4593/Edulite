@@ -3,9 +3,11 @@ import { registerSW } from 'virtual:pwa-register'
 import { getStoredUser, logout as doLogout } from './utils/auth'
 import { getDefaultTier, setDefaultTier as saveDefaultTier, clearDefaultTier } from './utils/prefs'
 import Login from './components/Login'
+import Navbar from './components/Navbar'
 import ContentModeScreen from './components/ContentModeScreen'
 import PacketList from './components/PacketList'
 import PacketView from './components/PacketView'
+import Profile from './components/Profile'
 import HowItWorks from './components/HowItWorks'
 import './App.css'
 
@@ -17,6 +19,7 @@ export default function App() {
   const [openPacketId, setOpenPacketId] = useState(null)
   const [openAssignment, setOpenAssignment] = useState(null)
   const [mode, setMode] = useState('study')
+  const [showProfile, setShowProfile] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
 
   const handleLogin = useCallback(() => setUser(getStoredUser()), [])
@@ -28,6 +31,7 @@ export default function App() {
     setDefaultContentTier(null)
     setOpenPacketId(null)
     setOpenAssignment(null)
+    setShowProfile(false)
   }, [])
 
   const handleContentModeSelect = useCallback((tierId) => {
@@ -38,6 +42,7 @@ export default function App() {
   const handleChangeContentMode = useCallback(() => {
     clearDefaultTier()
     setDefaultContentTier(null)
+    setShowProfile(false)
   }, [])
 
   const handleOpenPacket = (packetId, assignment) => {
@@ -49,6 +54,8 @@ export default function App() {
     setOpenPacketId(null)
     setOpenAssignment(null)
   }
+
+  const handleHome = useCallback(() => setShowProfile(false), [])
 
   if (!user) {
     return (
@@ -67,59 +74,74 @@ export default function App() {
           defaultTier={defaultContentTier}
           onBack={handleBack}
         />
-      ) : defaultContentTier === null ? (
-        <>
-          <div className="app-header">
-            <div className="mode-toggle">
-              <button
-                type="button"
-                className={mode === 'study' ? 'active' : ''}
-                onClick={() => setMode('study')}
-              >
-                Study
-              </button>
-              <button
-                type="button"
-                className={mode === 'school' ? 'active' : ''}
-                onClick={() => setMode('school')}
-              >
-                School
-              </button>
-            </div>
-            <button type="button" className="logout-btn" onClick={handleLogout}>
-              Log out
-            </button>
-          </div>
-          <ContentModeScreen onSelect={handleContentModeSelect} />
-        </>
       ) : (
         <>
-          <div className="app-header">
-            <div className="mode-toggle">
-              <button
-                type="button"
-                className={mode === 'study' ? 'active' : ''}
-                onClick={() => setMode('study')}
-              >
-                Study
-              </button>
-              <button
-                type="button"
-                className={mode === 'school' ? 'active' : ''}
-                onClick={() => setMode('school')}
-              >
-                School
-              </button>
-            </div>
-            <button type="button" className="logout-btn" onClick={handleLogout}>
-              Log out
-            </button>
-          </div>
-          <PacketList
-            mode={mode}
-            onOpenPacket={handleOpenPacket}
-            onChangeContentMode={handleChangeContentMode}
+          <Navbar
+            onHome={handleHome}
+            onHowItWorks={() => setShowHowItWorks(true)}
+            onProfile={() => setShowProfile(true)}
+            onLogout={handleLogout}
+            showProfile={showProfile}
           />
+
+          {showProfile ? (
+            <Profile
+              user={user}
+              onUpdateUser={() => setUser(getStoredUser())}
+              onChangeContentMode={handleChangeContentMode}
+              onLogout={handleLogout}
+            />
+          ) : defaultContentTier === null ? (
+            <>
+              <div className="app-header">
+                <div className="mode-toggle">
+                  <button
+                    type="button"
+                    className={mode === 'study' ? 'active' : ''}
+                    onClick={() => setMode('study')}
+                  >
+                    Study
+                  </button>
+                  <button
+                    type="button"
+                    className={mode === 'school' ? 'active' : ''}
+                    onClick={() => setMode('school')}
+                  >
+                    School
+                  </button>
+                </div>
+              </div>
+              <ContentModeScreen onSelect={handleContentModeSelect} />
+            </>
+          ) : (
+            <>
+              <div className="app-header">
+                <div className="mode-toggle">
+                  <button
+                    type="button"
+                    className={mode === 'study' ? 'active' : ''}
+                    onClick={() => setMode('study')}
+                  >
+                    Study
+                  </button>
+                  <button
+                    type="button"
+                    className={mode === 'school' ? 'active' : ''}
+                    onClick={() => setMode('school')}
+                  >
+                    School
+                  </button>
+                </div>
+              </div>
+              <PacketList
+                mode={mode}
+                onOpenPacket={handleOpenPacket}
+                onChangeContentMode={handleChangeContentMode}
+              />
+            </>
+          )}
+
+          {showHowItWorks && <HowItWorks onClose={() => setShowHowItWorks(false)} />}
         </>
       )}
     </div>
