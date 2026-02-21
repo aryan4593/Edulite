@@ -10,7 +10,7 @@ export default function Login({ onLogin }) {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
-    login({ name: trimmed, studentId: studentId.trim() || undefined })
+    login({ name: trimmed, studentId: studentId.trim() || undefined, path: 'study', role: 'learner' })
     log('Login: submitted', { name: trimmed, studentId: studentId.trim() || '(none)' })
     onLogin()
   }

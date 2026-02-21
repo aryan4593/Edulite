@@ -256,6 +256,93 @@
   box-shadow: var(--shadow-lg);
 }
 
+.path-choice-card {
+  max-width: 400px;
+}
+
+.path-choice-back {
+  margin-bottom: var(--space-4);
+  padding: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
+  background: none;
+}
+
+.path-choice-back:hover {
+  color: var(--primary);
+}
+
+.path-choice-prompt {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--text);
+  margin-bottom: var(--space-5);
+  text-align: center;
+}
+
+.path-choice-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.path-choice-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.path-choice-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-muted);
+}
+
+.path-choice-label {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text);
+  margin-bottom: var(--space-1);
+}
+
+.path-choice-desc {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.teacher-dashboard {
+  padding-top: var(--space-4);
+}
+
+.teacher-dashboard h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-2);
+  color: var(--text);
+}
+
+.teacher-dashboard-sub {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.teacher-dashboard-placeholder {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-6);
+  max-width: 480px;
+}
+
 .login-logo {
   width: 56px;
   height: auto;
@@ -322,6 +409,12 @@
 .login-input:focus {
   outline: none;
   border-color: var(--primary);
+}
+
+.login-error {
+  font-size: var(--text-sm);
+  color: var(--error);
+  margin-bottom: var(--space-3);
 }
 
 .login-btn {

@@ -1,21 +1,46 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { getStoredUser, logout as doLogout } from './utils/auth'
 import { getDefaultTier, setDefaultTier as saveDefaultTier, clearDefaultTier } from './utils/prefs'
 import { log } from './utils/debug'
+import PathChoiceScreen from './components/PathChoiceScreen'
+import SchoolRoleScreen from './components/SchoolRoleScreen'
+import SchoolStudentLogin from './components/SchoolStudentLogin'
+import SchoolTeacherLogin from './components/SchoolTeacherLogin'
 import Login from './components/Login'
 import Navbar from './components/Navbar'
 import ContentModeScreen from './components/ContentModeScreen'
 import PacketList from './components/PacketList'
 import PacketView from './components/PacketView'
 import Profile from './components/Profile'
+import TeacherDashboard from './components/TeacherDashboard'
 import HowItWorks from './components/HowItWorks'
 import './App.css'
+
+const SESSION_PATH_KEY = 'edulite_path'
+const SESSION_SCHOOL_ROLE_KEY = 'edulite_school_role'
+
+function getStoredPath() {
+  try {
+    return sessionStorage.getItem(SESSION_PATH_KEY) || null
+  } catch {
+    return null
+  }
+}
+function getStoredSchoolRole() {
+  try {
+    return sessionStorage.getItem(SESSION_SCHOOL_ROLE_KEY) || null
+  } catch {
+    return null
+  }
+}
 
 registerSW({ immediate: true })
 
 export default function App() {
   const [user, setUser] = useState(getStoredUser)
+  const [pathChoice, setPathChoice] = useState(getStoredPath)
+  const [schoolRole, setSchoolRole] = useState(getStoredSchoolRole)
   const [defaultContentTier, setDefaultContentTier] = useState(getDefaultTier)
   const [openPacketId, setOpenPacketId] = useState(null)
   const [openAssignment, setOpenAssignment] = useState(null)
@@ -23,21 +48,56 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
 
+  useEffect(() => {
+    if (user?.path === 'school' && user?.role === 'student') setMode('school')
+  }, [user?.path, user?.role])
+
   const handleLogin = useCallback(() => {
     const u = getStoredUser()
     setUser(u)
-    log('App: user logged in', { name: u?.name })
+    log('App: user logged in', { path: u?.path, role: u?.role })
   }, [])
 
   const handleLogout = useCallback(() => {
     doLogout()
     clearDefaultTier()
     setUser(null)
+    setPathChoice(null)
+    setSchoolRole(null)
     setDefaultContentTier(null)
     setOpenPacketId(null)
     setOpenAssignment(null)
     setShowProfile(false)
-    log('App: logout, tier cleared')
+    log('App: logout, tier and path/role cleared')
+  }, [])
+
+  const setPathSchool = useCallback(() => {
+    setPathChoice('school')
+    try { sessionStorage.setItem(SESSION_PATH_KEY, 'school') } catch {}
+  }, [])
+  const setPathStudy = useCallback(() => {
+    setPathChoice('study')
+    try { sessionStorage.setItem(SESSION_PATH_KEY, 'study') } catch {}
+  }, [])
+  const setRoleStudent = useCallback(() => {
+    setSchoolRole('student')
+    try { sessionStorage.setItem(SESSION_SCHOOL_ROLE_KEY, 'student') } catch {}
+  }, [])
+  const setRoleTeacher = useCallback(() => {
+    setSchoolRole('teacher')
+    try { sessionStorage.setItem(SESSION_SCHOOL_ROLE_KEY, 'teacher') } catch {}
+  }, [])
+  const goBackToPathChoice = useCallback(() => {
+    setPathChoice(null)
+    setSchoolRole(null)
+    try {
+      sessionStorage.removeItem(SESSION_PATH_KEY)
+      sessionStorage.removeItem(SESSION_SCHOOL_ROLE_KEY)
+    } catch {}
+  }, [])
+  const goBackToSchoolRole = useCallback(() => {
+    setSchoolRole(null)
+    try { sessionStorage.removeItem(SESSION_SCHOOL_ROLE_KEY) } catch {}
   }, [])
 
   const handleContentModeSelect = useCallback((tierId) => {
@@ -73,7 +133,41 @@ export default function App() {
   if (!user) {
     return (
       <div className="app">
-        <Login onLogin={handleLogin} />
+        {pathChoice === null && (
+          <PathChoiceScreen onSelectSchool={setPathSchool} onSelectStudy={setPathStudy} />
+        )}
+        {pathChoice === 'study' && (
+          <Login onLogin={handleLogin} />
+        )}
+        {pathChoice === 'school' && schoolRole === null && (
+          <SchoolRoleScreen
+            onSelectStudent={setRoleStudent}
+            onSelectTeacher={setRoleTeacher}
+            onBack={goBackToPathChoice}
+          />
+        )}
+        {pathChoice === 'school' && schoolRole === 'student' && (
+          <SchoolStudentLogin onLogin={handleLogin} onBack={goBackToSchoolRole} />
+        )}
+        {pathChoice === 'school' && schoolRole === 'teacher' && (
+          <SchoolTeacherLogin onLogin={handleLogin} onBack={goBackToSchoolRole} />
+        )}
+      </div>
+    )
+  }
+
+  if (user.role === 'teacher') {
+    return (
+      <div className="app">
+        <Navbar
+          onHome={() => {}}
+          onHowItWorks={() => setShowHowItWorks(true)}
+          onProfile={() => {}}
+          onLogout={handleLogout}
+          showProfile={false}
+        />
+        <TeacherDashboard user={user} onLogout={handleLogout} />
+        {showHowItWorks && <HowItWorks onClose={() => setShowHowItWorks(false)} />}
       </div>
     )
   }

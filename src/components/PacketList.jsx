@@ -4,8 +4,8 @@ import { samplePacket } from '../data/samplePacket'
 import { syncNow } from '../api/sync'
 import { log, logError } from '../utils/debug'
 
-const PACKETS_JSON_URL = '/packets/packets.json'
-const ASSIGNMENTS_JSON_URL = '/packets/assignments.json'
+const PACKETS_JSON_URL = (typeof import.meta.env?.BASE_URL === 'string' ? import.meta.env.BASE_URL : '') + 'packets/packets.json'
+const ASSIGNMENTS_JSON_URL = (typeof import.meta.env?.BASE_URL === 'string' ? import.meta.env.BASE_URL : '') + 'packets/assignments.json'
 
 export default function PacketList({ userId, mode, onOpenPacket, onChangeContentMode }) {
   const [packets, setPackets] = useState([])
@@ -17,26 +17,39 @@ export default function PacketList({ userId, mode, onOpenPacket, onChangeContent
 
   useEffect(() => {
     async function load() {
+      let list = await getAllPackets()
       try {
         const res = await fetch(PACKETS_JSON_URL)
         if (res.ok) {
           const packetsFromJson = await res.json()
           if (Array.isArray(packetsFromJson) && packetsFromJson.length > 0) {
             for (const p of packetsFromJson) await savePacket(p)
+            list = await getAllPackets()
             log('PacketList: loaded from JSON', { count: packetsFromJson.length })
-          } else {
+          } else if (list.length === 0) {
             await savePacket(samplePacket)
+            list = await getAllPackets()
             log('PacketList: JSON empty/invalid, using sample packet')
           }
         } else {
-          await savePacket(samplePacket)
-          log('PacketList: fetch not ok', res.status, ', using sample packet')
+          if (list.length === 0) {
+            await savePacket(samplePacket)
+            list = await getAllPackets()
+            log('PacketList: fetch not ok', res.status, ', using sample packet')
+          } else {
+            log('PacketList: fetch not ok, using cached packets', { cached: list.length })
+          }
         }
       } catch (e) {
         logError('PacketList: load error', e)
-        await savePacket(samplePacket)
+        if (list.length === 0) {
+          await savePacket(samplePacket)
+          list = await getAllPackets()
+          log('PacketList: using sample packet after error')
+        } else {
+          log('PacketList: using cached packets after error', { cached: list.length })
+        }
       }
-      const list = await getAllPackets()
       setPackets(list)
       const progress = userId ? await getAllProgress(userId) : []
       const map = {}
