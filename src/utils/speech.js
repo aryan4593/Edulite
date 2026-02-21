@@ -41,3 +41,57 @@ export function speak(text, options = {}) {
   if (typeof options.onEnd === 'function') u.onend = options.onEnd
   window.speechSynthesis.speak(u)
 }
+
+/**
+ * Speech-to-text via Web Speech API (SpeechRecognition).
+ * Returns a promise that resolves with the transcript when speech recognition completes.
+ * @param {object} options - Optional: { lang?: string, onStart?: () => void, onEnd?: () => void }
+ * @returns {Promise<string>} - Transcript of recognized speech
+ */
+export function startListening(options = {}) {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') {
+      reject(new Error('Speech recognition not available'))
+      return
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      reject(new Error('Speech recognition not supported'))
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    if (options.lang) {
+      recognition.lang = options.lang
+    }
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+
+    recognition.onstart = () => {
+      if (typeof options.onStart === 'function') {
+        options.onStart()
+      }
+    }
+
+    recognition.onresult = (event) => {
+      let transcript = ''
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript
+      }
+      resolve(transcript)
+    }
+
+    recognition.onerror = (event) => {
+      reject(new Error(event.error))
+    }
+
+    recognition.onend = () => {
+      if (typeof options.onEnd === 'function') {
+        options.onEnd()
+      }
+    }
+
+    recognition.start()
+  })
+}

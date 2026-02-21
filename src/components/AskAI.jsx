@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from 'react'
 import { askGemini, isGeminiConfigured } from '../api/gemini'
 import { getPacketInLocale } from '../utils/translate'
 import { getPreferredLocale } from '../constants/locales'
+import { startListening } from '../utils/speech'
 
 export default function AskAI({ open, onClose, openPacketId, locale: localeProp }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [listening, setListening] = useState(false)
   const [context, setContext] = useState('')
   const messagesEndRef = useRef(null)
   const locale = localeProp ?? getPreferredLocale()
@@ -49,6 +51,23 @@ export default function AskAI({ open, onClose, openPacketId, locale: localeProp 
     }
   }
 
+  const handleMic = async () => {
+    if (listening || loading) return
+    setListening(true)
+    try {
+      // Convert short locale codes (e.g., 'hi', 'ta') to proper language tags (e.g., 'hi-IN', 'ta-IN')
+      const langTag = locale === 'en' ? 'en-US' : `${locale}-IN`
+      const transcript = await startListening({ lang: langTag })
+      if (transcript) {
+        setInput(transcript)
+      }
+    } catch (e) {
+      console.error('Speech recognition failed:', e)
+    } finally {
+      setListening(false)
+    }
+  }
+
   if (!open) return null
 
   const configured = isGeminiConfigured()
@@ -88,6 +107,16 @@ export default function AskAI({ open, onClose, openPacketId, locale: localeProp 
           onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
           disabled={!configured || loading}
         />
+        <button
+          type="button"
+          className={`ask-ai-mic ${listening ? 'ask-ai-mic--listening' : ''}`}
+          onClick={handleMic}
+          disabled={!configured || loading || listening}
+          aria-label="Start voice input"
+          title="Click to speak"
+        >
+          🎤
+        </button>
         <button
           type="button"
           className="ask-ai-send"
